@@ -55,9 +55,8 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    NSLog(@"blah, observing works");
     //TODO: add check for correct keypath change
-    if (_tableView != nil) {
+    if (_tableView != nil && [keyPath isEqualToString:_observing.keyPath]) {
         [_tableView reloadData];
     }
     
@@ -131,7 +130,7 @@
 //
 - (CGFloat)heightForRow:(NSInteger)row
 {
-    return 44;
+    return (self.cellHeight == 0) ? 44 : self.cellHeight;
 }
 
 - (void)didSelectRow:(NSInteger)row realIndexPath:(NSIndexPath *)indexPath

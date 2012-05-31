@@ -64,6 +64,26 @@
     return self;
 }
 
+- (void)setTableView:(UITableView *)tableView
+{
+    if (_tableView != tableView) {
+        if (_tableView != nil) {
+            [_tableView release];
+            _tableView = nil;
+        }
+        
+        _tableView = tableView;
+        
+        if (_tableView != nil) {
+            [_tableView retain];
+            
+            for (LRTableViewPart *part in _parts) {
+                part.tableView = _tableView;
+            }
+        }
+    }
+}
+
 - (void)addPart:(LRTableViewPart *)part
 {
     part.tableView = self.tableView;

@@ -8,8 +8,12 @@
 
 #import "LRTableViewPart.h"
 #import "UITableViewCell+cellTypeToString.h"
+#import "LRObserving.h"
 
 @interface LRTableViewPart ()
+{
+    LRObserving *_observing;
+}
 
 - (UITableViewCell *)cellFromNibNamed:(NSString *)nibName;
 - (void)populateCell:(UITableViewCell *)cell forRow:(NSInteger)row;
@@ -21,7 +25,6 @@
 
 @synthesize cellIdentifier;
 @synthesize cellStyle = _cellStyle;
-@synthesize data = _data;
 @synthesize tableView = _tableView;
 @synthesize bindings;
 @synthesize cellHeight = _cellHeight;
@@ -31,10 +34,10 @@
     self = [super init];
     
     if (self) {
-        _data = nil;
         _tableView = nil;
         _cellStyle = UITableViewCellStyleDefault;
         _cellHeight = 0;
+        _observing = [[LRObserving alloc] init];
     }
     
     return self;
@@ -42,7 +45,8 @@
 
 - (void)dealloc
 {
-    self.data = nil;
+    [_observing release];
+    
     self.tableView = nil;
     self.cellIdentifier = nil;
     
@@ -51,6 +55,7 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
+    NSLog(@"blah, observing works");
     //TODO: add check for correct keypath change
     if (_tableView != nil) {
         [_tableView reloadData];
@@ -58,27 +63,17 @@
     
 }
 
-- (void)setData:(NSArray *)data
+- (void)observeObject:(id)object forKeyPath:(NSString *)keyPath
 {
-    if (data != _data) {
-        
-        if (_data != nil) {
-            [self removeObserver:self forKeyPath:@"data"];
-            [_data release];
-        }
-        
-        _data = data;
-        
-        if (_data != nil) {
-            [_data retain];
-            [self addObserver:self forKeyPath:@"data" options:NSKeyValueObservingOptionInitial|NSKeyValueObservingOptionNew context:nil];
-        }
-    }
+    _observing.object = object;
+    _observing.keyPath = keyPath;
+    
+    [object addObserver:self forKeyPath:keyPath options:0 context:nil];
 }
 
 - (NSInteger)numberOfRows
 {
-    return (_data == nil) ? 0 : _data.count;
+    return (_observing.object == nil) ? 0 : [(NSArray *)[_observing.object valueForKeyPath:_observing.keyPath] count];
 }
 
 - (UITableViewCell *)cellFromNibNamed:(NSString *)nibName
@@ -103,7 +98,7 @@
     if (self.bindings != nil) {
         for (NSString *cellKeyPath in self.bindings) {
             NSString *dataKeyPath = [self.bindings valueForKeyPath:cellKeyPath];
-            [cell setValue:[[self.data objectAtIndex:row] valueForKeyPath:dataKeyPath] forKeyPath:cellKeyPath];
+            [cell setValue:[[(NSArray *)[_observing.object valueForKeyPath:_observing.keyPath] objectAtIndex:row] valueForKeyPath:dataKeyPath] forKeyPath:cellKeyPath];
         }
     }
 }

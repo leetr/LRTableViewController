@@ -12,7 +12,6 @@
 
 @property (nonatomic, copy) NSString *cellIdentifier;
 @property (nonatomic) UITableViewCellStyle cellStyle;
-@property (nonatomic, strong) NSArray *data;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSDictionary *bindings;
 @property (nonatomic) CGFloat cellHeight;
@@ -21,5 +20,6 @@
 - (UITableViewCell *)cellForRow:(NSInteger)row;
 - (CGFloat)heightForRow:(NSInteger)row;
 - (void)didSelectRow:(NSInteger)row realIndexPath:(NSIndexPath *)indexPath;
+- (void)observeObject:(id)object forKeyPath:(NSString *)keyPath;
 
 @end

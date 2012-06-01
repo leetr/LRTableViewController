@@ -28,6 +28,7 @@
 @synthesize tableView = _tableView;
 @synthesize bindings;
 @synthesize cellHeight = _cellHeight;
+@synthesize onCellSelectedBlock;
 
 - (id)init
 {
@@ -49,6 +50,7 @@
     
     self.tableView = nil;
     self.cellIdentifier = nil;
+    self.onCellSelectedBlock = nil;
     
     [super dealloc];
 }
@@ -133,9 +135,12 @@
     return (self.cellHeight == 0) ? 44 : self.cellHeight;
 }
 
+//
 - (void)didSelectRow:(NSInteger)row realIndexPath:(NSIndexPath *)indexPath
 {
-    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if (self.onCellSelectedBlock != nil) {
+        self.onCellSelectedBlock(self.tableView, indexPath, row);
+    }
 }
 
 @end

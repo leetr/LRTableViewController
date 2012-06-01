@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+typedef void (^OnCellSelectedBlock)(UITableView *tableView, NSIndexPath *realIndexPath, NSInteger partRow);
+
 @interface LRTableViewPart : NSObject
 
 @property (nonatomic, copy) NSString *cellIdentifier;
@@ -15,6 +17,7 @@
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSDictionary *bindings;
 @property (nonatomic) CGFloat cellHeight;
+@property (nonatomic, strong) OnCellSelectedBlock onCellSelectedBlock; 
 
 - (NSInteger)numberOfRows;
 - (UITableViewCell *)cellForRow:(NSInteger)row;

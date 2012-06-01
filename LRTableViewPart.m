@@ -30,6 +30,22 @@
 @synthesize cellHeight = _cellHeight;
 @synthesize onCellSelectedBlock;
 
++ (LRTableViewPart *)partWithCellStyle:(UITableViewCellStyle)style
+{
+    LRTableViewPart *part = [[[LRTableViewPart alloc] init] autorelease];
+    part.cellStyle = style;
+    
+    return part;
+}
+
++ (LRTableViewPart *)partWithCellIdentifier:(NSString *)identifier
+{
+    LRTableViewPart *part = [[[LRTableViewPart alloc] init] autorelease];
+    part.cellIdentifier = identifier;
+    
+    return part;
+}
+
 - (id)init
 {
     self = [super init];

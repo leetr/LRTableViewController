@@ -19,6 +19,9 @@ typedef void (^OnCellSelectedBlock)(UITableView *tableView, NSIndexPath *realInd
 @property (nonatomic) CGFloat cellHeight;
 @property (nonatomic, strong) OnCellSelectedBlock onCellSelectedBlock; 
 
++ (LRTableViewPart *)partWithCellStyle:(UITableViewCellStyle)style;
++ (LRTableViewPart *)partWithCellIdentifier:(NSString *)identifier;
+
 - (NSInteger)numberOfRows;
 - (UITableViewCell *)cellForRow:(NSInteger)row;
 - (CGFloat)heightForRow:(NSInteger)row;

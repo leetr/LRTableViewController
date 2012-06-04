@@ -10,7 +10,7 @@
 
 @interface LRObserving : NSObject
 
-@property (nonatomic, assign) id object;
+@property (nonatomic, strong) id object;
 @property (nonatomic, copy) NSString *keyPath;
 
 @end

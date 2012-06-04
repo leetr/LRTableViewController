@@ -68,6 +68,9 @@
     self.cellIdentifier = nil;
     self.onCellSelectedBlock = nil;
     
+    [_observing.object removeObserver:self];
+    [_observing release];    
+    
     [super dealloc];
 }
 

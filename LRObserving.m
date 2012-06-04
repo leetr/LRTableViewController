@@ -12,4 +12,13 @@
 
 @synthesize object, keyPath;
 
+- (void)dealloc
+{
+    self.object = nil;
+    self.keyPath = nil;
+    
+    [super dealloc];
+}
+
+
 @end

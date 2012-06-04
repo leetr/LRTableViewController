@@ -62,13 +62,11 @@
 
 - (void)dealloc
 {
-    [_observing release];
-    
     self.tableView = nil;
     self.cellIdentifier = nil;
     self.onCellSelectedBlock = nil;
     
-    [_observing.object removeObserver:self];
+    [_observing.object removeObserver:self forKeyPath:_observing.keyPath];
     [_observing release];    
     
     [super dealloc];

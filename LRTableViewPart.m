@@ -91,7 +91,13 @@
 
 - (NSInteger)numberOfRows
 {
-    return (_observing.object == nil) ? 0 : [(NSArray *)[_observing.object valueForKeyPath:_observing.keyPath] count];
+    if (_observing.object == nil) {
+        return 0;
+    }
+    NSObject *obj = [_observing.object valueForKeyPath:_observing.keyPath];
+    BOOL isArray = ([obj isKindOfClass:[NSArray class]]);
+    
+    return (!isArray) ? 1 : [(NSArray *)obj count];
 }
 
 - (UITableViewCell *)cellFromNibNamed:(NSString *)nibName
@@ -114,9 +120,16 @@
 - (void)populateCell:(UITableViewCell *)cell forRow:(NSInteger)row
 {
     if (self.bindings != nil) {
+        
+        NSObject *obj = [_observing.object valueForKeyPath:_observing.keyPath];
+        
+        if ([obj isKindOfClass:[NSArray class]]) {
+            obj = [(NSArray *)obj objectAtIndex:row]; 
+        } 
+        
         for (NSString *cellKeyPath in self.bindings) {
             NSString *dataKeyPath = [self.bindings valueForKeyPath:cellKeyPath];
-            [cell setValue:[[(NSArray *)[_observing.object valueForKeyPath:_observing.keyPath] objectAtIndex:row] valueForKeyPath:dataKeyPath] forKeyPath:cellKeyPath];
+            [cell setValue:[obj valueForKeyPath:dataKeyPath] forKeyPath:cellKeyPath];
         }
     }
 }

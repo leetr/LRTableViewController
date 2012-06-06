@@ -7,10 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "LRTableViewCellDelegate.h"
 
 typedef void (^OnCellSelectedBlock)(UITableView *tableView, NSIndexPath *realIndexPath, NSInteger partRow);
+typedef void (^OnViewSelectedBlock)(UIView *view, NSInteger partRow);
 
-@interface LRTableViewPart : NSObject
+@interface LRTableViewPart : NSObject <LRTableViewCellDelegate>
 
 @property (nonatomic, copy) NSString *cellIdentifier;
 @property (nonatomic) UITableViewCellStyle cellStyle;
@@ -18,6 +20,7 @@ typedef void (^OnCellSelectedBlock)(UITableView *tableView, NSIndexPath *realInd
 @property (nonatomic, strong) NSDictionary *bindings;
 @property (nonatomic) CGFloat cellHeight;
 @property (nonatomic, strong) OnCellSelectedBlock onCellSelectedBlock; 
+@property (nonatomic, strong) OnViewSelectedBlock onViewSelectedBlock; 
 
 + (LRTableViewPart *)partWithCellStyle:(UITableViewCellStyle)style;
 + (LRTableViewPart *)partWithCellIdentifier:(NSString *)identifier;

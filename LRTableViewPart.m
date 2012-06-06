@@ -10,6 +10,8 @@
 #import "UITableViewCell+cellTypeToString.h"
 #import "LRObserving.h"
 
+const NSUInteger kRowViewTag = 99119922;
+
 @interface LRTableViewPart ()
 {
     LRObserving *_observing;
@@ -17,7 +19,8 @@
 
 - (UITableViewCell *)cellFromNibNamed:(NSString *)nibName;
 - (void)populateCell:(UITableViewCell *)cell forRow:(NSInteger)row;
-
+- (void)setRowNum:(NSInteger)row forCell:(UITableViewCell *)cell;
+- (NSInteger)getRowNumForCell:(UITableViewCell *)cell;
 @end
 
 
@@ -29,6 +32,7 @@
 @synthesize bindings;
 @synthesize cellHeight = _cellHeight;
 @synthesize onCellSelectedBlock;
+@synthesize onViewSelectedBlock;
 
 + (LRTableViewPart *)partWithCellStyle:(UITableViewCellStyle)style
 {
@@ -65,6 +69,7 @@
     self.tableView = nil;
     self.cellIdentifier = nil;
     self.onCellSelectedBlock = nil;
+    self.onViewSelectedBlock = nil;
     
     [_observing.object removeObserver:self forKeyPath:_observing.keyPath];
     [_observing release];    
@@ -100,6 +105,38 @@
     return (!isArray) ? 1 : [(NSArray *)obj count];
 }
 
+- (void)setRowNum:(NSInteger)row forCell:(UITableViewCell *)cell
+{
+    //OMG HACK ALERT!!!
+    UIView *v = [cell viewWithTag:kRowViewTag];
+    
+    if (v == nil) {
+        v = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)] autorelease];
+        v.tag = kRowViewTag;
+        
+        UIView *subV = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)] autorelease];
+        [v addSubview:subV];
+        
+        [cell addSubview:v];
+    }
+    
+    UIView *tagView = [[v subviews] objectAtIndex:0];
+    tagView.tag = row;
+}
+
+- (NSInteger)getRowNumForCell:(UITableViewCell *)cell
+{
+    UIView *v = [cell viewWithTag:kRowViewTag];
+    
+    if (v != nil) {
+       UIView *tagView = [[v subviews] objectAtIndex:0];
+        return tagView.tag;
+    }
+    
+    return -1;
+}
+
+
 - (UITableViewCell *)cellFromNibNamed:(NSString *)nibName
 {
     NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:nibName owner:nil options:nil];
@@ -132,6 +169,8 @@
             [cell setValue:[obj valueForKeyPath:dataKeyPath] forKeyPath:cellKeyPath];
         }
     }
+    
+    [self setRowNum:row forCell:cell];
 }
 
 //
@@ -156,6 +195,12 @@
     
     [self populateCell:cell forRow:row];
     
+    cell.tag = row;
+    
+    if ([cell respondsToSelector:NSSelectorFromString(@"delegate")] ){
+        [cell setValue:self forKey:@"delegate"];
+    }
+    
     return cell;
 }
 
@@ -170,6 +215,15 @@
 {
     if (self.onCellSelectedBlock != nil) {
         self.onCellSelectedBlock(self.tableView, indexPath, row);
+    }
+}
+
+#pragma mark - LRTableViewCellDelegate
+
+- (void)tableViewCell:(UITableViewCell *)cell didSelectView:(UIView *)view
+{
+    if (self.onViewSelectedBlock != nil) {
+        self.onViewSelectedBlock(view, [self getRowNumForCell:cell]);
     }
 }
 

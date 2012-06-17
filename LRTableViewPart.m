@@ -15,12 +15,15 @@ const NSUInteger kRowViewTag = 99119922;
 @interface LRTableViewPart ()
 {
     LRObserving *_observing;
+    NSMutableArray *_observingKeyPaths;
 }
 
 - (UITableViewCell *)cellFromNibNamed:(NSString *)nibName;
 - (void)populateCell:(UITableViewCell *)cell forRow:(NSInteger)row;
 - (void)setRowNum:(NSInteger)row forCell:(UITableViewCell *)cell;
 - (NSInteger)getRowNumForCell:(UITableViewCell *)cell;
+- (void)removeObserverFromSubitems;
+- (void)observeSubitems;
 @end
 
 
@@ -59,6 +62,7 @@ const NSUInteger kRowViewTag = 99119922;
         _cellStyle = UITableViewCellStyleDefault;
         _cellHeight = 0;
         _observing = [[LRObserving alloc] init];
+        _observingKeyPaths = [[NSMutableArray alloc] init];
     }
     
     return self;
@@ -71,19 +75,40 @@ const NSUInteger kRowViewTag = 99119922;
     self.onCellSelectedBlock = nil;
     self.onViewSelectedBlock = nil;
     
+    [self removeObserverFromSubitems];
+    [_observingKeyPaths release];
+    
     [_observing.object removeObserver:self forKeyPath:_observing.keyPath];
     [_observing release];    
     
     [super dealloc];
 }
 
+
+- (void)setTableView:(UITableView *)tableView
+{
+    if (tableView != _tableView) {
+        if (_tableView != nil) {
+            [_tableView release];
+            _tableView = nil;
+        }
+        
+        _tableView = tableView;
+        
+        if (_tableView != nil) {
+            [_tableView retain];
+            NSLog(@"set table view");
+        }
+    }
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    //TODO: add check for correct keypath change
-    if (_tableView != nil && [keyPath isEqualToString:_observing.keyPath]) {
-        [_tableView reloadData];
-    }
+    NSLog(@"Observed change for keyPath:%@", keyPath);
     
+    //TODO: add check for correct keypath change
+    //TODO: when main observed keyPath changes, needs to change observed subitems
+    [_tableView reloadData];
 }
 
 - (void)observeObject:(id)object forKeyPath:(NSString *)keyPath
@@ -92,6 +117,28 @@ const NSUInteger kRowViewTag = 99119922;
     _observing.keyPath = keyPath;
     
     [object addObserver:self forKeyPath:keyPath options:0 context:nil];
+    
+    if (![[_observing.object valueForKeyPath:_observing.keyPath] isKindOfClass:[NSArray class]]) {
+        //if an individual item, we can observe it's subitems
+        [self observeSubitems];
+    } 
+}
+
+- (void)removeObserverFromSubitems
+{
+    for (NSString *keyPath in _observingKeyPaths) {
+        [_observing.object removeObserver:self forKeyPath:keyPath];
+    }
+}
+
+- (void)observeSubitems
+{
+    
+    for (NSString *key in self.bindings) {
+        NSString *newKeyPath = [NSString stringWithFormat:@"%@.%@", _observing.keyPath, [self.bindings valueForKey:key]];
+        [_observing.object addObserver:self forKeyPath:newKeyPath options:0 context:nil];
+        [_observingKeyPaths addObject:newKeyPath];
+    }
 }
 
 - (NSInteger)numberOfRows
@@ -102,7 +149,9 @@ const NSUInteger kRowViewTag = 99119922;
     NSObject *obj = [_observing.object valueForKeyPath:_observing.keyPath];
     BOOL isArray = ([obj isKindOfClass:[NSArray class]]);
     
-    return (!isArray) ? 1 : [(NSArray *)obj count];
+    NSInteger numRows = (!isArray) ? 1 : [(NSArray *)obj count];
+    
+    return numRows;
 }
 
 - (void)setRowNum:(NSInteger)row forCell:(UITableViewCell *)cell

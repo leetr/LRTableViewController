@@ -1,9 +1,8 @@
 //
 //  LRObserver.m
-//  Rowporter
 //
 //  Created by Denis Smirnov on 12-05-31.
-//  Copyright (c) 2012 Tasol Global. All rights reserved.
+//  Copyright (c) 2012 Leetr Inc. All rights reserved.
 //
 
 #import "LRObserving.h"
@@ -19,6 +18,5 @@
     
     [super dealloc];
 }
-
 
 @end

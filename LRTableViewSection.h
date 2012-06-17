@@ -1,6 +1,5 @@
 //
 //  LRTableSection.h
-//  OttrJam
 //
 //  Created by Denis Smirnov on 12-05-28.
 //  Copyright (c) 2012 Leetr.com. All rights reserved.

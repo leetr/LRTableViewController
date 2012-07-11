@@ -96,15 +96,12 @@ const NSUInteger kRowViewTag = 99119922;
         
         if (_tableView != nil) {
             [_tableView retain];
-            NSLog(@"set table view");
         }
     }
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    NSLog(@"Observed change for keyPath:%@", keyPath);
-    
     //TODO: add check for correct keypath change
     //TODO: when main observed keyPath changes, needs to change observed subitems
     [_tableView reloadData];

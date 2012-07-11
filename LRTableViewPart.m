@@ -103,8 +103,6 @@ const NSUInteger kRowViewTag = 99119922;
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    NSLog(@"Observed change for keyPath:%@", keyPath);
-    
     //TODO: add check for correct keypath change
     //TODO: when main observed keyPath changes, needs to change observed subitems
     [_tableView reloadData];
@@ -189,7 +187,7 @@ const NSUInteger kRowViewTag = 99119922;
 {
     NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:nibName owner:nil options:nil];
     
-    UITableViewCell *cell;
+    UITableViewCell *cell = nil;
     
     for (id currentObject in topLevelObjects) {
         if ([currentObject isKindOfClass:[UITableViewCell class]]) {

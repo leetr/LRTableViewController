@@ -60,11 +60,18 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     
     if (self) {
-        _sections = [[NSMutableArray alloc] init];
-        [self setupPullToRefreshHeaderStrings];
+        
     }
     
     return self;
+}
+
+- (void)awakeFromNib
+{
+    _sections = [[NSMutableArray alloc] init];
+    [self setupPullToRefreshHeaderStrings];
+    
+    [super awakeFromNib];
 }
 
 - (void)dealloc
@@ -188,7 +195,7 @@
     [container addSubview:refreshLabel];
     [container addSubview:refreshSpinner];
     
-    return container;
+    return [container autorelease];
 }
 
 - (void)setupPullToRefreshHeaderStrings

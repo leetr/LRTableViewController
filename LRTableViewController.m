@@ -60,7 +60,20 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     
     if (self) {
-        
+        _sections = [[NSMutableArray alloc] init];
+        [self setupPullToRefreshHeaderStrings];
+    }
+    
+    return self;
+}
+
+- (id)init
+{
+    self = [super init];
+    
+    if (self) {
+        _sections = [[NSMutableArray alloc] init];
+        [self setupPullToRefreshHeaderStrings];
     }
     
     return self;
@@ -68,8 +81,7 @@
 
 - (void)awakeFromNib
 {
-    _sections = [[NSMutableArray alloc] init];
-    [self setupPullToRefreshHeaderStrings];
+    
     
     [super awakeFromNib];
 }

@@ -96,7 +96,6 @@ const NSUInteger kRowViewTag = 99119922;
         
         if (_tableView != nil) {
             [_tableView retain];
-            NSLog(@"set table view");
         }
     }
 }

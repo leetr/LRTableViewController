@@ -12,6 +12,7 @@
 @interface LRTableViewSection : NSObject
 
 @property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, copy) NSString *headerTitle;
 
 + (LRTableViewSection *)sectionWithParts:(LRTableViewPart *)part1, ... NS_REQUIRES_NIL_TERMINATION;
 

@@ -355,4 +355,9 @@
     [section didSelectRowAtIndexPath:indexPath];
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)sectionNum
+{
+    LRTableViewSection *section = (LRTableViewSection *)[_sections objectAtIndex:sectionNum];
+    return section.headerTitle;
+}
 @end

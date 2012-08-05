@@ -216,7 +216,7 @@ const NSUInteger kRowViewTag = 99119922;
             if ([dataKeyPath isEqualToString:@"[self]"]) {
                 [cell setValue:obj forKeyPath:cellKeyPath];
             } else if ([dataKeyPath hasPrefix:@"[value]"]) {
-                [cell setValue:[dataKeyPath substringFromIndex:8] forKey:cellKeyPath];
+                [cell setValue:[dataKeyPath substringFromIndex:7] forKeyPath:cellKeyPath];
             } else {
                 [cell setValue:[obj valueForKeyPath:dataKeyPath] forKeyPath:cellKeyPath];
             }

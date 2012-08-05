@@ -26,6 +26,7 @@
 @property (nonatomic, strong) IBOutlet UITableView *tableView;
 
 - (void)addSection:(LRTableViewSection *)section;
+- (void)removeAllSections;
 
 - (void)startLoading;
 - (void)stopLoading;

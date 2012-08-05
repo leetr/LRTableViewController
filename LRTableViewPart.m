@@ -157,6 +157,7 @@ const NSUInteger kRowViewTag = 99119922;
     
     if (v == nil) {
         v = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)] autorelease];
+        v.hidden = YES;
         v.tag = kRowViewTag;
         
         UIView *subV = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)] autorelease];
@@ -211,7 +212,14 @@ const NSUInteger kRowViewTag = 99119922;
         
         for (NSString *cellKeyPath in self.bindings) {
             NSString *dataKeyPath = [self.bindings valueForKeyPath:cellKeyPath];
-            [cell setValue:[obj valueForKeyPath:dataKeyPath] forKeyPath:cellKeyPath];
+            
+            if ([dataKeyPath isEqualToString:@"[self]"]) {
+                [cell setValue:obj forKeyPath:cellKeyPath];
+            } else if ([dataKeyPath hasPrefix:@"[value]"]) {
+                [cell setValue:[dataKeyPath substringFromIndex:8] forKey:cellKeyPath];
+            } else {
+                [cell setValue:[obj valueForKeyPath:dataKeyPath] forKeyPath:cellKeyPath];
+            }
         }
     }
     
@@ -242,7 +250,7 @@ const NSUInteger kRowViewTag = 99119922;
     
     cell.tag = row;
     
-    if ([cell respondsToSelector:NSSelectorFromString(@"delegate")] ){
+    if ([cell respondsToSelector:@selector(setDelegate:)] ){
         [cell setValue:self forKey:@"delegate"];
     }
     

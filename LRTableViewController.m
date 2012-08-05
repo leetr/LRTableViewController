@@ -79,13 +79,6 @@
     return self;
 }
 
-- (void)awakeFromNib
-{
-    
-    
-    [super awakeFromNib];
-}
-
 - (void)dealloc
 {
     self.tableView = nil;
@@ -121,6 +114,11 @@
 {
     section.tableView = self.tableView;
     [_sections addObject:section];
+}
+
+- (void)removeAllSections
+{
+    [_sections removeAllObjects];
 }
 
 #pragma mark PullToRefresh methods

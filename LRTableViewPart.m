@@ -112,12 +112,12 @@ const NSUInteger kRowViewTag = 99119922;
     _observing.object = object;
     _observing.keyPath = keyPath;
     
-    [object addObserver:self forKeyPath:keyPath options:0 context:nil];
+    [object addObserver:self forKeyPath:keyPath options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
     
-    if (![[_observing.object valueForKeyPath:_observing.keyPath] isKindOfClass:[NSArray class]]) {
-        //if an individual item, we can observe it's subitems
-        [self observeSubitems];
-    } 
+//    if (![[_observing.object valueForKeyPath:_observing.keyPath] isKindOfClass:[NSArray class]]) {
+//        //if an individual item, we can observe it's subitems
+//        [self observeSubitems];
+//    } 
 }
 
 - (void)removeObserverFromSubitems

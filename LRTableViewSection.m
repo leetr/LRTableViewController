@@ -20,6 +20,7 @@
 @implementation LRTableViewSection
 
 @synthesize tableView = _tableView, headerTitle = _headerTitle;
+@synthesize headerView = _headerView;
 
 + (LRTableViewSection *)sectionWithParts:(LRTableViewPart *)part1, ...
 {

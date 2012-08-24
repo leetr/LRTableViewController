@@ -13,6 +13,7 @@
 
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) NSString *headerTitle;
+@property (nonatomic, strong) UIView *headerView;
 
 + (LRTableViewSection *)sectionWithParts:(LRTableViewPart *)part1, ... NS_REQUIRES_NIL_TERMINATION;
 

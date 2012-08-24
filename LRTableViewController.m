@@ -358,4 +358,24 @@
     LRTableViewSection *section = (LRTableViewSection *)[_sections objectAtIndex:sectionNum];
     return section.headerTitle;
 }
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)sectionNum
+{
+    LRTableViewSection *section = (LRTableViewSection *)[_sections objectAtIndex:sectionNum];
+    return section.headerView;
+}
+
+-(float)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)sectionNum {
+    
+    LRTableViewSection *section = (LRTableViewSection *)[_sections objectAtIndex:sectionNum];
+    if (section.headerView == nil && section.headerTitle == nil) {
+        return 0;
+    }
+    
+    if (section.headerView != nil) {
+        return section.headerView.frame.size.height;
+    } else {
+        return 22;
+    }
+}
 @end

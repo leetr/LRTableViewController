@@ -37,10 +37,12 @@
     NSMutableArray *_sections;
     float _refresh_header_height;
     BOOL _isUsingDefaultView;
+    UIView *_pullToRefreshView;
 }
  
 - (void)setupPullToRefreshHeaderStrings;
 - (void)addPullToRefreshHeader;
+- (void)removePullToRefreshHeader;
 - (void)showLoadingHeader;
 - (UIView *)defaultViewForRefreshHeaderView;
 
@@ -232,7 +234,18 @@
     frame.origin.y = 0 - _refresh_header_height;
     refreshHeaderView.frame = frame;
     
+    _pullToRefreshView = [refreshHeaderView retain];
+    
     [self.tableView addSubview:refreshHeaderView];
+}
+
+- (void)removePullToRefreshHeader
+{
+    if (_pullToRefreshView != nil && _pullToRefreshView.superview != nil) {
+        [_pullToRefreshView removeFromSuperview];
+        [_pullToRefreshView release];
+        _pullToRefreshView = nil;
+    }
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView 
@@ -278,6 +291,10 @@
 
 - (void)showLoadingHeader
 {
+    if (!_isPullToRefresh) {
+        [self addPullToRefreshHeader];
+    }
+    
     [self updateRefreshHeaderForLoading];
     
     // Show the header
@@ -311,6 +328,11 @@
 
 - (void)stopLoadingComplete:(NSString *)animationID finished:(NSNumber *)finished context:(void *)context 
 {
+    if (!_isPullToRefresh) {
+        if (_isUsingDefaultView) {
+            [self removePullToRefreshHeader];
+        }
+    }
     [self resetRefreshHeader];
 }
 

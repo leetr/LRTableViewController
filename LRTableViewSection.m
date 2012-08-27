@@ -51,6 +51,8 @@
     [_parts release];
     
     self.tableView = nil;
+    self.headerView = nil;
+    self.headerTitle = nil;
     
     [super dealloc];
 }

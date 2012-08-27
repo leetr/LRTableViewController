@@ -14,6 +14,7 @@
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) NSString *headerTitle;
 @property (nonatomic, strong) UIView *headerView;
+@property (nonatomic, assign) BOOL hideHeaderWhenEmpty;
 
 + (LRTableViewSection *)sectionWithParts:(LRTableViewPart *)part1, ... NS_REQUIRES_NIL_TERMINATION;
 

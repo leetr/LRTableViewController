@@ -21,6 +21,7 @@
 
 @synthesize tableView = _tableView, headerTitle = _headerTitle;
 @synthesize headerView = _headerView;
+@synthesize hideHeaderWhenEmpty;
 
 + (LRTableViewSection *)sectionWithParts:(LRTableViewPart *)part1, ...
 {
@@ -48,9 +49,52 @@
 - (void)dealloc
 {
     [_parts release];
+    
     self.tableView = nil;
     
     [super dealloc];
+}
+
+- (NSString *)headerTitle
+{
+    if (self.hideHeaderWhenEmpty) {
+        BOOL hide = NO;
+        for (LRTableViewPart *part in _parts) {
+            if (part.numberOfRows > 0) {
+                hide = YES;
+                break;
+            }
+        }
+        
+        if (!hide) {
+            return _headerTitle;
+        } else {
+            return nil;
+        }
+    } else {
+        return _headerTitle;
+    }
+}
+
+- (UIView *)headerView
+{
+    if (self.hideHeaderWhenEmpty) {
+        BOOL hide = NO;
+        for (LRTableViewPart *part in _parts) {
+            if (part.numberOfRows > 0) {
+                hide = YES;
+                break;
+            }
+        }
+        
+        if (!hide) {
+            return _headerView;
+        } else {
+            return nil;
+        }
+    } else {
+        return _headerView;
+    }
 }
 
 - (id)init

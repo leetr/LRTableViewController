@@ -8,6 +8,7 @@
 #import "LRTableViewPart.h"
 #import "UITableViewCell+cellTypeToString.h"
 #import "LRObserving.h"
+#import "LRCellHeight.h"
 
 const NSUInteger kRowViewTag = 99119922;
 
@@ -263,7 +264,20 @@ const NSUInteger kRowViewTag = 99119922;
 //
 - (CGFloat)heightForRow:(NSInteger)row
 {
-    return (self.cellHeight == 0) ? 44 : self.cellHeight;
+    if (self.cellHeight == -1) {
+        UITableViewCell *cell = [self cellForRow:row];
+        
+        if (cell != nil && [cell conformsToProtocol:@protocol(LRCellHeight)]) {
+            return [(UITableViewCell<LRCellHeight> *)cell height];
+        }
+    } else if (self.cellHeight == 0) {
+    
+        
+    } else {
+        return self.cellHeight;
+    }
+    
+    return 44;
 }
 
 //

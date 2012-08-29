@@ -60,10 +60,10 @@
 - (NSString *)headerTitle
 {
     if (self.hideHeaderWhenEmpty) {
-        BOOL hide = NO;
+        BOOL hide = YES;
         for (LRTableViewPart *part in _parts) {
             if (part.numberOfRows > 0) {
-                hide = YES;
+                hide = NO;
                 break;
             }
         }
@@ -81,10 +81,10 @@
 - (UIView *)headerView
 {
     if (self.hideHeaderWhenEmpty) {
-        BOOL hide = NO;
+        BOOL hide = YES;
         for (LRTableViewPart *part in _parts) {
             if (part.numberOfRows > 0) {
-                hide = YES;
+                hide = NO;
                 break;
             }
         }

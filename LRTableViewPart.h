@@ -11,6 +11,15 @@
 typedef void (^OnCellSelectedBlock)(UITableView *tableView, NSIndexPath *realIndexPath, NSInteger partRow);
 typedef void (^OnViewSelectedBlock)(UIView *view, NSInteger partRow);
 
+@class LRTableViewPart;
+
+@protocol LRTableViewPartDelegate <NSObject>
+
+- (void)tableViewPart:(LRTableViewPart *)part insertRowsInIndexSet:(NSIndexSet *)indexset withRowAnimation:(UITableViewRowAnimation)animation;
+- (void)tableViewPart:(LRTableViewPart *)part deleteRowsInIndexSet:(NSIndexSet *)indexset withRowAnimation:(UITableViewRowAnimation)animation;
+
+@end
+
 @interface LRTableViewPart : NSObject <LRTableViewCellDelegate>
 
 @property (nonatomic, copy) NSString *cellIdentifier;
@@ -20,6 +29,8 @@ typedef void (^OnViewSelectedBlock)(UIView *view, NSInteger partRow);
 @property (nonatomic) CGFloat cellHeight;
 @property (nonatomic, strong) OnCellSelectedBlock onCellSelectedBlock; 
 @property (nonatomic, strong) OnViewSelectedBlock onViewSelectedBlock; 
+@property (nonatomic, assign) id<LRTableViewPartDelegate> delegate;
+@property (nonatomic, assign) UITableViewRowAnimation rowAnimation;
 
 + (LRTableViewPart *)partWithCellStyle:(UITableViewCellStyle)style;
 + (LRTableViewPart *)partWithCellIdentifier:(NSString *)identifier;

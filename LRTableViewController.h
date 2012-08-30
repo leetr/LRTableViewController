@@ -9,7 +9,7 @@
 #import "LRTableViewSection.h"
 #import "LRTableViewPart.h"
 
-@interface LRTableViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+@interface LRTableViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, LRTableViewSectionDelegate>
 {
     UILabel *refreshLabel;
     UIImageView *refreshArrow;

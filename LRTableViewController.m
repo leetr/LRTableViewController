@@ -115,6 +115,8 @@
 - (void)addSection:(LRTableViewSection *)section
 {
     section.tableView = self.tableView;
+    section.delegate = self;
+    
     [_sections addObject:section];
 }
 
@@ -400,4 +402,37 @@
         return 22;
     }
 }
+
+#pragma mark - LRTableViewSectionDelegate
+
+- (void)tableViewSection:(LRTableViewSection *)section insertRowsInIndexSet:(NSIndexSet *)indexset withRowAnimation:(UITableViewRowAnimation)animation
+{
+    if (section != nil && indexset != nil) {
+        int sectionNum = [_sections indexOfObject:section];
+        NSMutableArray *indexPaths = [NSMutableArray array];
+        
+        [indexset enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:idx inSection:sectionNum];
+            [indexPaths addObject:indexPath];
+        }];
+        
+        [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:animation];
+    }
+}
+
+- (void)tableViewSection:(LRTableViewSection *)section deleteRowsInIndexSet:(NSIndexSet *)indexset withRowAnimation:(UITableViewRowAnimation)animation
+{
+    if (section != nil && indexset != nil) {
+        int sectionNum = [_sections indexOfObject:section];
+        NSMutableArray *indexPaths = [NSMutableArray array];
+        
+        [indexset enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:idx inSection:sectionNum];
+            [indexPaths addObject:indexPath];
+        }];
+        
+        [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:animation];
+    }
+}
+
 @end

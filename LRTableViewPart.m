@@ -36,6 +36,8 @@ const NSUInteger kRowViewTag = 99119922;
 @synthesize cellHeight = _cellHeight;
 @synthesize onCellSelectedBlock;
 @synthesize onViewSelectedBlock;
+@synthesize delegate = _partDelegate;
+@synthesize rowAnimation = _rowAnimation;
 
 + (LRTableViewPart *)partWithCellStyle:(UITableViewCellStyle)style
 {
@@ -63,6 +65,7 @@ const NSUInteger kRowViewTag = 99119922;
         _cellHeight = 0;
         _observing = [[LRObserving alloc] init];
         _observingKeyPaths = [[NSMutableArray alloc] init];
+        _rowAnimation = UITableViewRowAnimationNone;
     }
     
     return self;
@@ -105,7 +108,29 @@ const NSUInteger kRowViewTag = 99119922;
 {
     //TODO: add check for correct keypath change
     //TODO: when main observed keyPath changes, needs to change observed subitems
-    [_tableView reloadData];
+    
+    if (change != nil) {
+        NSKeyValueChange kind = [[change valueForKey:NSKeyValueChangeKindKey] intValue];
+        NSIndexSet *indexes = [change valueForKey:@"indexes"];
+        
+        switch (kind) {
+            case NSKeyValueChangeInsertion:
+                if (self.delegate != nil && [self.delegate conformsToProtocol:@protocol(LRTableViewPartDelegate)]) {
+                    [self.delegate tableViewPart:self insertRowsInIndexSet:indexes withRowAnimation:self.rowAnimation];
+                }
+                break;
+            case NSKeyValueChangeRemoval:
+                //remove
+                if (self.delegate != nil && [self.delegate conformsToProtocol:@protocol(LRTableViewPartDelegate)]) {
+                    [self.delegate tableViewPart:self deleteRowsInIndexSet:indexes withRowAnimation:self.rowAnimation];
+                }
+                break;
+                
+            default:
+                [_tableView reloadData];
+                break;
+        }
+    }
 }
 
 - (void)observeObject:(id)object forKeyPath:(NSString *)keyPath

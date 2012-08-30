@@ -6,15 +6,24 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "LRTableViewPart.h"
 
-@class LRTableViewPart;
+@class LRTableViewSection;
 
-@interface LRTableViewSection : NSObject
+@protocol LRTableViewSectionDelegate <NSObject>
+
+- (void)tableViewSection:(LRTableViewSection *)section insertRowsInIndexSet:(NSIndexSet *)indexset withRowAnimation:(UITableViewRowAnimation)animation;
+- (void)tableViewSection:(LRTableViewSection *)section deleteRowsInIndexSet:(NSIndexSet *)indexset withRowAnimation:(UITableViewRowAnimation)animation;
+
+@end
+
+@interface LRTableViewSection : NSObject <LRTableViewPartDelegate>
 
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) NSString *headerTitle;
 @property (nonatomic, strong) UIView *headerView;
 @property (nonatomic, assign) BOOL hideHeaderWhenEmpty;
+@property (nonatomic, assign) id<LRTableViewSectionDelegate> delegate;
 
 + (LRTableViewSection *)sectionWithParts:(LRTableViewPart *)part1, ... NS_REQUIRES_NIL_TERMINATION;
 

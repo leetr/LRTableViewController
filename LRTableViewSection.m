@@ -22,6 +22,7 @@
 @synthesize tableView = _tableView, headerTitle = _headerTitle;
 @synthesize headerView = _headerView;
 @synthesize hideHeaderWhenEmpty;
+@synthesize delegate = _delegate;
 
 + (LRTableViewSection *)sectionWithParts:(LRTableViewPart *)part1, ...
 {
@@ -133,6 +134,8 @@
 - (void)addPart:(LRTableViewPart *)part
 {
     part.tableView = self.tableView;
+    part.delegate = self;
+    
     [_parts addObject:part];
 }
 
@@ -198,5 +201,41 @@
     
     [part didSelectRow:(indexPath.row - rowOffset) realIndexPath:indexPath];
 }
+
+
+#pragma mark - LRTableViewPartDelegate
+
+- (void)tableViewPart:(LRTableViewPart *)part insertRowsInIndexSet:(NSIndexSet *)indexset withRowAnimation:(UITableViewRowAnimation)animation
+{
+    if (part != nil && indexset != nil && self.delegate != nil && [self.delegate conformsToProtocol:@protocol(LRTableViewSectionDelegate)]) {
+        NSMutableIndexSet *newSet = [[NSMutableIndexSet alloc] init];
+        int rowOffset = [self rowOffsetForPart:part];
+        
+        [indexset enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+            [newSet addIndex:(idx + rowOffset)];
+        }];
+        
+        [self.delegate tableViewSection:self insertRowsInIndexSet:newSet withRowAnimation:animation];
+        
+        [newSet release];
+    }
+}
+
+- (void)tableViewPart:(LRTableViewPart *)part deleteRowsInIndexSet:(NSIndexSet *)indexset withRowAnimation:(UITableViewRowAnimation)animation
+{
+    if (part != nil && indexset != nil && self.delegate != nil && [self.delegate conformsToProtocol:@protocol(LRTableViewSectionDelegate)]) {
+        NSMutableIndexSet *newSet = [[NSMutableIndexSet alloc] init];
+        int rowOffset = [self rowOffsetForPart:part];
+        
+        [indexset enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+            [newSet addIndex:(idx + rowOffset)];
+        }];
+        
+        [self.delegate tableViewSection:self deleteRowsInIndexSet:newSet withRowAnimation:animation];
+        
+        [newSet release];
+    }
+}
+
 
 @end

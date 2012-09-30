@@ -26,6 +26,8 @@
 @property (nonatomic, strong) IBOutlet UITableView *tableView;
 
 - (void)addSection:(LRTableViewSection *)section;
+- (void)removeSection:(LRTableViewSection *)section;
+- (void)removeSection:(LRTableViewSection *)section withAnimation:(UITableViewRowAnimation)animation;
 - (void)removeAllSections;
 
 - (void)startLoading;

@@ -112,6 +112,24 @@
     }
 }
 
+- (void)removeSection:(LRTableViewSection *)section
+{
+    [self removeSection:section withAnimation:UITableViewRowAnimationNone];
+}
+
+- (void)removeSection:(LRTableViewSection *)section withAnimation:(UITableViewRowAnimation)animation
+{
+    int sectionIndex = [_sections indexOfObject:section];
+    
+    if (sectionIndex > -1) {
+        [_sections removeObjectAtIndex:sectionIndex];
+    
+        [self.tableView beginUpdates];
+        [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:animation];
+        [self.tableView endUpdates];
+    }
+}
+
 - (void)addSection:(LRTableViewSection *)section
 {
     section.tableView = self.tableView;
@@ -416,7 +434,9 @@
             [indexPaths addObject:indexPath];
         }];
         
+        [self.tableView beginUpdates];
         [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:animation];
+        [self.tableView endUpdates];
     }
 }
 
@@ -431,7 +451,9 @@
             [indexPaths addObject:indexPath];
         }];
         
+        [self.tableView beginUpdates];
         [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:animation];
+        [self.tableView endUpdates];
     }
 }
 

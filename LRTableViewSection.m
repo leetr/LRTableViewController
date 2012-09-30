@@ -23,6 +23,7 @@
 @synthesize headerView = _headerView;
 @synthesize hideHeaderWhenEmpty;
 @synthesize delegate = _delegate;
+@synthesize tag;
 
 + (LRTableViewSection *)sectionWithParts:(LRTableViewPart *)part1, ...
 {

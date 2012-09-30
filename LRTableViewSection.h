@@ -24,6 +24,7 @@
 @property (nonatomic, strong) UIView *headerView;
 @property (nonatomic, assign) BOOL hideHeaderWhenEmpty;
 @property (nonatomic, assign) id<LRTableViewSectionDelegate> delegate;
+@property (nonatomic, assign) int tag;
 
 + (LRTableViewSection *)sectionWithParts:(LRTableViewPart *)part1, ... NS_REQUIRES_NIL_TERMINATION;
 

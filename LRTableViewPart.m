@@ -274,7 +274,7 @@ const NSUInteger kRowViewTag = 99119922;
         NSString *identifier = [UITableViewCell cellTypeToString:self.cellStyle];
         cell = [self.tableView dequeueReusableCellWithIdentifier:identifier];
         if (cell == nil) {
-            cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault 
+            cell = [[[UITableViewCell alloc] initWithStyle:self.cellStyle 
                                            reuseIdentifier:[UITableViewCell cellTypeToString:self.cellStyle]] autorelease];
         }
     }

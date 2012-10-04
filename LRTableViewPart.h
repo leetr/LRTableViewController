@@ -8,6 +8,8 @@
 #import <UIKit/UIKit.h>
 #import "LRTableViewCellDelegate.h"
 
+#define LRCellHeightDynamic -1
+
 typedef void (^OnCellSelectedBlock)(UITableView *tableView, NSIndexPath *realIndexPath, NSInteger partRow);
 typedef void (^OnViewSelectedBlock)(UIView *view, NSInteger partRow);
 

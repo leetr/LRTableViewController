@@ -123,6 +123,7 @@
 - (void)removeAllSections
 {
     [_sections removeAllObjects];
+    [_tableView reloadData];
 }
 
 #pragma mark PullToRefresh methods

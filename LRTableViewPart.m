@@ -239,7 +239,7 @@ const NSUInteger kRowViewTag = 99119922;
         for (NSString *cellKeyPath in self.bindings) {
             NSString *dataKeyPath = [self.bindings valueForKeyPath:cellKeyPath];
             
-            if ([dataKeyPath isEqualToString:@"[self]"]) {
+            if ([dataKeyPath isEqualToString:@"[self]"] || [dataKeyPath isEqualToString:@"[object]"]) {
                 [cell setValue:obj forKeyPath:cellKeyPath];
             } else if ([dataKeyPath hasPrefix:@"[value]"]) {
                 [cell setValue:[dataKeyPath substringFromIndex:7] forKeyPath:cellKeyPath];

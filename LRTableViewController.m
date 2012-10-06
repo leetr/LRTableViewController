@@ -121,7 +121,7 @@
 {
     int sectionIndex = [_sections indexOfObject:section];
     
-    if (sectionIndex > -1) {
+    if (_sections.count > sectionIndex) {
         [_sections removeObjectAtIndex:sectionIndex];
     
         [self.tableView beginUpdates];
@@ -132,16 +132,28 @@
 
 - (void)addSection:(LRTableViewSection *)section
 {
-    section.tableView = self.tableView;
-    section.delegate = self;
-    
-    [_sections addObject:section];
+    [self addSection:section withAnimation:UITableViewRowAnimationNone];
+}
+
+- (void)addSection:(LRTableViewSection *)section withAnimation:(UITableViewRowAnimation)animation
+{
+    if (section != nil) {
+        section.tableView = self.tableView;
+        section.delegate = self;
+        
+        [_sections addObject:section];
+        
+        [self.tableView beginUpdates];
+        [self.tableView insertSections:[NSIndexSet indexSetWithIndex:(_sections.count - 1)] withRowAnimation:animation];
+        [self.tableView endUpdates];
+    }
 }
 
 - (void)removeAllSections
 {
-    [_sections removeAllObjects];
-    [_tableView reloadData];
+    for (LRTableViewSection *section in _sections) {
+        [self removeSection:section];
+    }
 }
 
 #pragma mark PullToRefresh methods

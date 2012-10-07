@@ -148,7 +148,7 @@
         [part stopObserving];
     }
     
-    [_parts removeAllObjects];
+//    [_parts removeAllObjects];
 }
 
 - (LRTableViewPart *)partForRow:(NSInteger)row

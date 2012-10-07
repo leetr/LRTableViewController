@@ -42,5 +42,6 @@ typedef void (^OnViewSelectedBlock)(UIView *view, NSInteger partRow);
 - (CGFloat)heightForRow:(NSInteger)row;
 - (void)didSelectRow:(NSInteger)row realIndexPath:(NSIndexPath *)indexPath;
 - (void)observeObject:(id)object forKeyPath:(NSString *)keyPath;
+- (void)stopObserving;
 
 @end

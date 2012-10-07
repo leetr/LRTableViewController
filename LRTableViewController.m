@@ -85,20 +85,21 @@
 {
     self.tableView = nil;
     [_sections release];
+    _sections = nil;
     
     if (_isUsingDefaultView) {
-        [refreshLabel release];
-        [refreshSpinner release];
+        [refreshLabel release]; refreshLabel = nil;
+        [refreshSpinner release]; refreshSpinner = nil;
         
         if (refreshArrow != nil) {
-            [refreshArrow release];
+            [refreshArrow release]; refreshArrow = nil;
         }
     }
     
-    [_refreshHeaderTextPull release];
-    [_refreshHeaderTextRelease release];
-    [_refreshHeaderTextLoading release];
-    [_refreshHeaderImageName release];
+    [_refreshHeaderTextPull release]; _refreshHeaderTextPull = nil;
+    [_refreshHeaderTextRelease release]; _refreshHeaderTextRelease = nil;
+    [_refreshHeaderTextLoading release]; _refreshHeaderTextLoading = nil;
+    [_refreshHeaderImageName release]; _refreshHeaderImageName = nil;
     
     [super dealloc];
 }
@@ -110,6 +111,13 @@
     if (_isPullToRefresh) {
         [self addPullToRefreshHeader];
     }
+}
+
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+    
+    self.tableView = nil;
 }
 
 - (void)removeSection:(LRTableViewSection *)section

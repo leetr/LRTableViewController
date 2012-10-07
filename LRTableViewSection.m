@@ -50,7 +50,9 @@
 
 - (void)dealloc
 {
-    [_parts release];
+    self.delegate = nil;
+    
+    [_parts release]; _parts = nil;
     
     self.tableView = nil;
     self.headerView = nil;
@@ -138,6 +140,15 @@
     part.delegate = self;
     
     [_parts addObject:part];
+}
+
+- (void)removeAllParts
+{
+    for (LRTableViewPart *part in _parts) {
+        [part stopObserving];
+    }
+    
+    [_parts removeAllObjects];
 }
 
 - (LRTableViewPart *)partForRow:(NSInteger)row

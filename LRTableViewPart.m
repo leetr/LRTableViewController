@@ -79,10 +79,10 @@ const NSUInteger kRowViewTag = 99119922;
     self.onViewSelectedBlock = nil;
     
     [self removeObserverFromSubitems];
-    [_observingKeyPaths release];
+    [_observingKeyPaths release]; _observingKeyPaths = nil;
     
     [_observing.object removeObserver:self forKeyPath:_observing.keyPath];
-    [_observing release];    
+    [_observing release]; _observing = nil;
     
     [super dealloc];
 }
@@ -135,15 +135,26 @@ const NSUInteger kRowViewTag = 99119922;
 
 - (void)observeObject:(id)object forKeyPath:(NSString *)keyPath
 {
+    [self stopObserving];
+    
     _observing.object = object;
     _observing.keyPath = keyPath;
     
-    [object addObserver:self forKeyPath:keyPath options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
+    [object addObserver:self forKeyPath:keyPath options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:@"LRTableViewPart"];
     
 //    if (![[_observing.object valueForKeyPath:_observing.keyPath] isKindOfClass:[NSArray class]]) {
 //        //if an individual item, we can observe it's subitems
 //        [self observeSubitems];
 //    } 
+}
+
+- (void)stopObserving
+{
+    if (_observing && _observing.object && _observing.keyPath) {
+        [_observing.object removeObserver:self forKeyPath:_observing.keyPath];
+        _observing.object = nil;
+        _observing.keyPath = nil;
+    }
 }
 
 - (void)removeObserverFromSubitems

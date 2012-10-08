@@ -120,6 +120,21 @@
     self.tableView = nil;
 }
 
+- (void)removeAllSections
+{
+    int numSections = _sections.count;
+    if (numSections > 0) {
+        
+        [_sections removeAllObjects];
+        
+        NSRange range = NSMakeRange(0, numSections);
+        
+        [self.tableView beginUpdates];
+        [self.tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:range] withRowAnimation:UITableViewRowAnimationNone];
+        [self.tableView endUpdates];
+    }
+}
+
 - (void)removeSection:(LRTableViewSection *)section
 {
     [self removeSection:section withAnimation:UITableViewRowAnimationNone];
@@ -154,13 +169,6 @@
         [self.tableView beginUpdates];
         [self.tableView insertSections:[NSIndexSet indexSetWithIndex:(_sections.count - 1)] withRowAnimation:animation];
         [self.tableView endUpdates];
-    }
-}
-
-- (void)removeAllSections
-{
-    for (LRTableViewSection *section in _sections) {
-        [self removeSection:section];
     }
 }
 

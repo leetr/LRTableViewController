@@ -34,8 +34,10 @@ const NSUInteger kRowViewTag = 99119922;
 @synthesize tableView = _tableView;
 @synthesize bindings;
 @synthesize cellHeight = _cellHeight;
-@synthesize onCellSelectedBlock;
-@synthesize onViewSelectedBlock;
+@synthesize onCellSelectedBlock = _onCellSelectedBlock;
+@synthesize onViewSelectedBlock = _onViewSelectedBlock;
+@synthesize onPartCellViewSelected = _onPartCellViewSelected;
+@synthesize onPartCellSelected = _onPartCellSelected;
 @synthesize delegate = _partDelegate;
 @synthesize rowAnimation = _rowAnimation;
 
@@ -66,6 +68,8 @@ const NSUInteger kRowViewTag = 99119922;
         _observing = [[LRObserving alloc] init];
         _observingKeyPaths = [[NSMutableArray alloc] init];
         _rowAnimation = UITableViewRowAnimationNone;
+        _onPartCellSelected = nil;
+        _onPartCellViewSelected = nil;
     }
     
     return self;
@@ -78,6 +82,9 @@ const NSUInteger kRowViewTag = 99119922;
     self.onCellSelectedBlock = nil;
     self.onViewSelectedBlock = nil;
     
+    self.onPartCellSelected = nil;
+    self.onPartCellViewSelected = nil;
+    
     [self removeObserverFromSubitems];
     [_observingKeyPaths release]; _observingKeyPaths = nil;
     
@@ -87,6 +94,17 @@ const NSUInteger kRowViewTag = 99119922;
     [super dealloc];
 }
 
+- (void)setOnPartCellSelected:(void(^)(LRTableViewPart *part, UITableView *tableView, NSIndexPath *indexPath, NSInteger partRow))block
+{
+    Block_release(_onPartCellSelected);
+    _onPartCellSelected = Block_copy(block);
+}
+
+- (void)setOnPartCellViewSelected:(void(^)(LRTableViewPart *part, UIView *view, NSInteger partRow))block
+{
+    Block_release(_onPartCellViewSelected);
+    _onPartCellViewSelected = Block_copy(block);
+}
 
 - (void)setTableView:(UITableView *)tableView
 {
@@ -323,7 +341,10 @@ const NSUInteger kRowViewTag = 99119922;
 //
 - (void)didSelectRow:(NSInteger)row realIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.onCellSelectedBlock != nil) {
+    if (self.onPartCellSelected != nil) {
+        self.onPartCellSelected(self, self.tableView, indexPath, row);
+    }
+    else if (self.onCellSelectedBlock != nil) {
         self.onCellSelectedBlock(self.tableView, indexPath, row);
     }
 }
@@ -332,7 +353,10 @@ const NSUInteger kRowViewTag = 99119922;
 
 - (void)tableViewCell:(UITableViewCell *)cell didSelectView:(UIView *)view
 {
-    if (self.onViewSelectedBlock != nil) {
+    if (self.onPartCellViewSelected != nil) {
+        self.onPartCellViewSelected(self, view, [self getRowNumForCell:cell]);
+    }
+    else if (self.onViewSelectedBlock != nil) {
         self.onViewSelectedBlock(view, [self getRowNumForCell:cell]);
     }
 }

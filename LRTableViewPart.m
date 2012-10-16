@@ -200,7 +200,7 @@ const NSUInteger kRowViewTag = 99119922;
     NSObject *obj = [_observing.object valueForKeyPath:_observing.keyPath];
     BOOL isArray = ([obj isKindOfClass:[NSArray class]]);
     
-    NSInteger numRows = (!isArray) ? 1 : [(NSArray *)obj count];
+    NSInteger numRows = (!isArray) ? ( (obj) ? 1 : 0) : [(NSArray *)obj count];
     
     return numRows;
 }

@@ -36,8 +36,8 @@ typedef void (^OnPartCellViewSelected)(LRTableViewPart *part, UIView *view, NSIn
 @property (nonatomic) CGFloat cellHeight;
 @property (nonatomic, strong) OnPartCellSelected onPartCellSelected;
 @property (nonatomic, strong) OnPartCellViewSelected onPartCellViewSelected;
-@property (nonatomic, assign) id<LRTableViewPartDelegate> delegate;
-@property (nonatomic, assign) UITableViewRowAnimation rowAnimation;
+@property (nonatomic, weak) id<LRTableViewPartDelegate> delegate;
+@property (nonatomic) UITableViewRowAnimation rowAnimation;
 
 //deprecated attributes
 @property (nonatomic, strong) OnCellSelectedBlock onCellSelectedBlock; //TODO: deprecate this in the future

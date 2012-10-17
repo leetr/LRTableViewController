@@ -21,9 +21,9 @@
 
 @synthesize tableView = _tableView, headerTitle = _headerTitle;
 @synthesize headerView = _headerView;
-@synthesize hideHeaderWhenEmpty;
+@synthesize hideHeaderWhenEmpty = _hideHeaderWhenEmpty;
 @synthesize delegate = _delegate;
-@synthesize tag;
+@synthesize tag = _tag;
 
 + (LRTableViewSection *)sectionWithParts:(LRTableViewPart *)part1, ...
 {
@@ -45,20 +45,18 @@
     
     va_end(argumentList);
     
-    return [section autorelease];
+    return section;
 }
 
 - (void)dealloc
 {
     self.delegate = nil;
     
-    [_parts release]; _parts = nil;
+    _parts = nil;
     
     self.tableView = nil;
     self.headerView = nil;
     self.headerTitle = nil;
-    
-    [super dealloc];
 }
 
 - (NSString *)headerTitle
@@ -117,15 +115,10 @@
 - (void)setTableView:(UITableView *)tableView
 {
     if (_tableView != tableView) {
-        if (_tableView != nil) {
-            [_tableView release];
-            _tableView = nil;
-        }
         
         _tableView = tableView;
         
         if (_tableView != nil) {
-            [_tableView retain];
             
             for (LRTableViewPart *part in _parts) {
                 part.tableView = _tableView;
@@ -147,7 +140,7 @@
     for (LRTableViewPart *part in _parts) {
         [part stopObserving];
     }
-    
+    //TODO: why did I commented it out?
 //    [_parts removeAllObjects];
 }
 
@@ -228,8 +221,6 @@
         }];
         
         [self.delegate tableViewSection:self insertRowsInIndexSet:newSet withRowAnimation:animation];
-        
-        [newSet release];
     }
 }
 
@@ -244,8 +235,6 @@
         }];
         
         [self.delegate tableViewSection:self deleteRowsInIndexSet:newSet withRowAnimation:animation];
-        
-        [newSet release];
     }
 }
 

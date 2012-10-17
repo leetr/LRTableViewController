@@ -22,9 +22,9 @@
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) NSString *headerTitle;
 @property (nonatomic, strong) UIView *headerView;
-@property (nonatomic, assign) BOOL hideHeaderWhenEmpty;
-@property (nonatomic, assign) id<LRTableViewSectionDelegate> delegate;
-@property (nonatomic, assign) int tag;
+@property (nonatomic) BOOL hideHeaderWhenEmpty;
+@property (nonatomic, weak) id<LRTableViewSectionDelegate> delegate;
+@property (nonatomic) int tag;
 
 + (LRTableViewSection *)sectionWithParts:(LRTableViewPart *)part1, ... NS_REQUIRES_NIL_TERMINATION;
 

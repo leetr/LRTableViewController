@@ -15,15 +15,12 @@ const NSUInteger kRowViewTag = 99119922;
 @interface LRTableViewPart ()
 {
     LRObserving *_observing;
-    NSMutableArray *_observingKeyPaths;
 }
 
 - (UITableViewCell *)cellFromNibNamed:(NSString *)nibName;
 - (void)populateCell:(UITableViewCell *)cell forRow:(NSInteger)row;
 - (void)setRowNum:(NSInteger)row forCell:(UITableViewCell *)cell;
 - (NSInteger)getRowNumForCell:(UITableViewCell *)cell;
-- (void)removeObserverFromSubitems;
-- (void)observeSubitems;
 @end
 
 
@@ -32,7 +29,7 @@ const NSUInteger kRowViewTag = 99119922;
 @synthesize cellIdentifier;
 @synthesize cellStyle = _cellStyle;
 @synthesize tableView = _tableView;
-@synthesize bindings;
+@synthesize bindings = _bindings;
 @synthesize cellHeight = _cellHeight;
 @synthesize onCellSelectedBlock = _onCellSelectedBlock;
 @synthesize onViewSelectedBlock = _onViewSelectedBlock;
@@ -43,7 +40,7 @@ const NSUInteger kRowViewTag = 99119922;
 
 + (LRTableViewPart *)partWithCellStyle:(UITableViewCellStyle)style
 {
-    LRTableViewPart *part = [[[LRTableViewPart alloc] init] autorelease];
+    LRTableViewPart *part = [[LRTableViewPart alloc] init];
     part.cellStyle = style;
     
     return part;
@@ -51,7 +48,7 @@ const NSUInteger kRowViewTag = 99119922;
 
 + (LRTableViewPart *)partWithCellIdentifier:(NSString *)identifier
 {
-    LRTableViewPart *part = [[[LRTableViewPart alloc] init] autorelease];
+    LRTableViewPart *part = [[LRTableViewPart alloc] init];
     part.cellIdentifier = identifier;
     
     return part;
@@ -66,7 +63,6 @@ const NSUInteger kRowViewTag = 99119922;
         _cellStyle = UITableViewCellStyleDefault;
         _cellHeight = 0;
         _observing = [[LRObserving alloc] init];
-        _observingKeyPaths = [[NSMutableArray alloc] init];
         _rowAnimation = UITableViewRowAnimationNone;
         _onPartCellSelected = nil;
         _onPartCellViewSelected = nil;
@@ -85,41 +81,18 @@ const NSUInteger kRowViewTag = 99119922;
     self.onPartCellSelected = nil;
     self.onPartCellViewSelected = nil;
     
-    [self removeObserverFromSubitems];
-    [_observingKeyPaths release]; _observingKeyPaths = nil;
-    
     [_observing.object removeObserver:self forKeyPath:_observing.keyPath];
-    [_observing release]; _observing = nil;
-    
-    [super dealloc];
+    _observing = nil;
 }
 
 - (void)setOnPartCellSelected:(void(^)(LRTableViewPart *part, UITableView *tableView, NSIndexPath *indexPath, NSInteger partRow))block
 {
-    Block_release(_onPartCellSelected);
-    _onPartCellSelected = Block_copy(block);
+    _onPartCellSelected = [block copy];
 }
 
 - (void)setOnPartCellViewSelected:(void(^)(LRTableViewPart *part, UIView *view, NSInteger partRow))block
 {
-    Block_release(_onPartCellViewSelected);
-    _onPartCellViewSelected = Block_copy(block);
-}
-
-- (void)setTableView:(UITableView *)tableView
-{
-    if (tableView != _tableView) {
-        if (_tableView != nil) {
-            [_tableView release];
-            _tableView = nil;
-        }
-        
-        _tableView = tableView;
-        
-        if (_tableView != nil) {
-            [_tableView retain];
-        }
-    }
+    _onPartCellViewSelected = [block copy];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -159,11 +132,6 @@ const NSUInteger kRowViewTag = 99119922;
     _observing.keyPath = keyPath;
     
     [object addObserver:self forKeyPath:keyPath options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:@"LRTableViewPart"];
-    
-//    if (![[_observing.object valueForKeyPath:_observing.keyPath] isKindOfClass:[NSArray class]]) {
-//        //if an individual item, we can observe it's subitems
-//        [self observeSubitems];
-//    } 
 }
 
 - (void)stopObserving
@@ -172,23 +140,6 @@ const NSUInteger kRowViewTag = 99119922;
         [_observing.object removeObserver:self forKeyPath:_observing.keyPath];
         _observing.object = nil;
         _observing.keyPath = nil;
-    }
-}
-
-- (void)removeObserverFromSubitems
-{
-    for (NSString *keyPath in _observingKeyPaths) {
-        [_observing.object removeObserver:self forKeyPath:keyPath];
-    }
-}
-
-- (void)observeSubitems
-{
-    
-    for (NSString *key in self.bindings) {
-        NSString *newKeyPath = [NSString stringWithFormat:@"%@.%@", _observing.keyPath, [self.bindings valueForKey:key]];
-        [_observing.object addObserver:self forKeyPath:newKeyPath options:0 context:nil];
-        [_observingKeyPaths addObject:newKeyPath];
     }
 }
 
@@ -211,11 +162,11 @@ const NSUInteger kRowViewTag = 99119922;
     UIView *v = [cell viewWithTag:kRowViewTag];
     
     if (v == nil) {
-        v = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)] autorelease];
+        v = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
         v.hidden = YES;
         v.tag = kRowViewTag;
         
-        UIView *subV = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)] autorelease];
+        UIView *subV = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
         [v addSubview:subV];
         
         [cell addSubview:v];
@@ -315,8 +266,8 @@ const NSUInteger kRowViewTag = 99119922;
         NSString *identifier = [UITableViewCell cellTypeToString:self.cellStyle];
         cell = [self.tableView dequeueReusableCellWithIdentifier:identifier];
         if (cell == nil) {
-            cell = [[[UITableViewCell alloc] initWithStyle:self.cellStyle 
-                                           reuseIdentifier:[UITableViewCell cellTypeToString:self.cellStyle]] autorelease];
+            cell = [[UITableViewCell alloc] initWithStyle:self.cellStyle
+                                          reuseIdentifier:identifier];
         }
     }
     

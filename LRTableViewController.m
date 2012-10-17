@@ -84,24 +84,21 @@
 - (void)dealloc
 {
     self.tableView = nil;
-    [_sections release];
     _sections = nil;
     
     if (_isUsingDefaultView) {
-        [refreshLabel release]; refreshLabel = nil;
-        [refreshSpinner release]; refreshSpinner = nil;
+        refreshLabel = nil;
+        refreshSpinner = nil;
         
         if (refreshArrow != nil) {
-            [refreshArrow release]; refreshArrow = nil;
+            refreshArrow = nil;
         }
     }
     
-    [_refreshHeaderTextPull release]; _refreshHeaderTextPull = nil;
-    [_refreshHeaderTextRelease release]; _refreshHeaderTextRelease = nil;
-    [_refreshHeaderTextLoading release]; _refreshHeaderTextLoading = nil;
-    [_refreshHeaderImageName release]; _refreshHeaderImageName = nil;
-    
-    [super dealloc];
+    _refreshHeaderTextPull = nil;
+    _refreshHeaderTextRelease = nil;
+    _refreshHeaderTextLoading = nil;
+    _refreshHeaderImageName = nil;
 }
 
 - (void)viewDidLoad
@@ -256,14 +253,14 @@
     [container addSubview:refreshLabel];
     [container addSubview:refreshSpinner];
     
-    return [container autorelease];
+    return container;
 }
 
 - (void)setupPullToRefreshHeaderStrings
 {
-    _refreshHeaderTextPull = [[NSString alloc] initWithString:@"Pull down to refresh..."];
-    _refreshHeaderTextRelease = [[NSString alloc] initWithString:@"Release to refresh..."];
-    _refreshHeaderTextLoading = [[NSString alloc] initWithString:@"Loading..."];
+    _refreshHeaderTextPull = @"Pull down to refresh...";
+    _refreshHeaderTextRelease = @"Release to refresh...";
+    _refreshHeaderTextLoading = @"Loading...";
     _refreshHeaderImageName = nil;
 }
 
@@ -283,7 +280,7 @@
     frame.origin.y = 0 - _refresh_header_height;
     refreshHeaderView.frame = frame;
     
-    _pullToRefreshView = [refreshHeaderView retain];
+    _pullToRefreshView = refreshHeaderView;
     
     [self.tableView addSubview:refreshHeaderView];
 }
@@ -292,7 +289,6 @@
 {
     if (_pullToRefreshView != nil && _pullToRefreshView.superview != nil) {
         [_pullToRefreshView removeFromSuperview];
-        [_pullToRefreshView release];
         _pullToRefreshView = nil;
     }
 }

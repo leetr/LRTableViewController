@@ -15,8 +15,6 @@
 {
     self.object = nil;
     self.keyPath = nil;
-    
-    [super dealloc];
 }
 
 @end

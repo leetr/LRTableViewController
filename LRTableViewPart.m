@@ -285,12 +285,14 @@ const NSUInteger kRowViewTag = 99119922;
             else {
                 NSString *value = [obj valueForKeyPath:dataKeyPath];
                 
-                if ([value hasPrefix:@"[image]"]) {
-                    UIImage *image = [UIImage imageNamed:[value substringFromIndex:7]];
-                    [cell setValue:image forKeyPath:cellKeyPath];
-                }
-                else {
-                    [cell setValue:value forKeyPath:cellKeyPath];
+                if (value && ![value isKindOfClass:[NSNull class]]) {
+                    if (value && [value hasPrefix:@"[image]"]) {
+                        UIImage *image = [UIImage imageNamed:[value substringFromIndex:7]];
+                        [cell setValue:image forKeyPath:cellKeyPath];
+                    }
+                    else {
+                        [cell setValue:value forKeyPath:cellKeyPath];
+                    }
                 }
             }
         }

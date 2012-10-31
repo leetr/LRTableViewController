@@ -43,7 +43,6 @@
 - (void)setupPullToRefreshHeaderStrings;
 - (void)addPullToRefreshHeader;
 - (void)removePullToRefreshHeader;
-- (void)showLoadingHeader;
 - (UIView *)defaultViewForRefreshHeaderView;
 
 @end
@@ -167,6 +166,11 @@
         [self.tableView insertSections:[NSIndexSet indexSetWithIndex:(_sections.count - 1)] withRowAnimation:animation];
         [self.tableView endUpdates];
     }
+}
+
+- (BOOL)containsSection:(LRTableViewSection *)section
+{
+    return [_sections containsObject:section];
 }
 
 #pragma mark PullToRefresh methods
@@ -337,6 +341,7 @@
 - (void)showLoadingHeader
 {
     if (!_isPullToRefresh) {
+        [self removePullToRefreshHeader];
         [self addPullToRefreshHeader];
     }
     

@@ -43,7 +43,6 @@
 - (void)setupPullToRefreshHeaderStrings;
 - (void)addPullToRefreshHeader;
 - (void)removePullToRefreshHeader;
-- (void)showLoadingHeader;
 - (UIView *)defaultViewForRefreshHeaderView;
 
 @end
@@ -85,20 +84,21 @@
 {
     self.tableView = nil;
     [_sections release];
+    _sections = nil;
     
     if (_isUsingDefaultView) {
-        [refreshLabel release];
-        [refreshSpinner release];
+        [refreshLabel release]; refreshLabel = nil;
+        [refreshSpinner release]; refreshSpinner = nil;
         
         if (refreshArrow != nil) {
-            [refreshArrow release];
+            [refreshArrow release]; refreshArrow = nil;
         }
     }
     
-    [_refreshHeaderTextPull release];
-    [_refreshHeaderTextRelease release];
-    [_refreshHeaderTextLoading release];
-    [_refreshHeaderImageName release];
+    [_refreshHeaderTextPull release]; _refreshHeaderTextPull = nil;
+    [_refreshHeaderTextRelease release]; _refreshHeaderTextRelease = nil;
+    [_refreshHeaderTextLoading release]; _refreshHeaderTextLoading = nil;
+    [_refreshHeaderImageName release]; _refreshHeaderImageName = nil;
     
     [super dealloc];
 }
@@ -112,6 +112,28 @@
     }
 }
 
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+    
+    self.tableView = nil;
+}
+
+- (void)removeAllSections
+{
+    int numSections = _sections.count;
+    if (numSections > 0) {
+        
+        [_sections removeAllObjects];
+        
+        NSRange range = NSMakeRange(0, numSections);
+        
+        [self.tableView beginUpdates];
+        [self.tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:range] withRowAnimation:UITableViewRowAnimationNone];
+        [self.tableView endUpdates];
+    }
+}
+
 - (void)removeSection:(LRTableViewSection *)section
 {
     [self removeSection:section withAnimation:UITableViewRowAnimationNone];
@@ -121,7 +143,7 @@
 {
     int sectionIndex = [_sections indexOfObject:section];
     
-    if (sectionIndex > -1) {
+    if (_sections.count > sectionIndex) {
         [_sections removeObjectAtIndex:sectionIndex];
     
         [self.tableView beginUpdates];
@@ -132,16 +154,26 @@
 
 - (void)addSection:(LRTableViewSection *)section
 {
-    section.tableView = self.tableView;
-    section.delegate = self;
-    
-    [_sections addObject:section];
+    [self addSection:section withAnimation:UITableViewRowAnimationNone];
 }
 
-- (void)removeAllSections
+- (void)addSection:(LRTableViewSection *)section withAnimation:(UITableViewRowAnimation)animation
 {
-    [_sections removeAllObjects];
-    [_tableView reloadData];
+    if (section != nil) {
+        section.tableView = self.tableView;
+        section.delegate = self;
+        
+        [_sections addObject:section];
+        
+        [self.tableView beginUpdates];
+        [self.tableView insertSections:[NSIndexSet indexSetWithIndex:(_sections.count - 1)] withRowAnimation:animation];
+        [self.tableView endUpdates];
+    }
+}
+
+- (BOOL)containsSection:(LRTableViewSection *)section
+{
+    return [_sections containsObject:section];
 }
 
 #pragma mark PullToRefresh methods
@@ -313,6 +345,7 @@
 - (void)showLoadingHeader
 {
     if (!_isPullToRefresh) {
+        [self removePullToRefreshHeader];
         [self addPullToRefreshHeader];
     }
     

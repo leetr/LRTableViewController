@@ -29,10 +29,13 @@
 - (void)removeSection:(LRTableViewSection *)section;
 - (void)removeSection:(LRTableViewSection *)section withAnimation:(UITableViewRowAnimation)animation;
 - (void)removeAllSections;
+- (BOOL)containsSection:(LRTableViewSection *)section;
 
 - (void)startLoading;
 - (void)stopLoading;
 - (void)refresh;
+
+- (void)showLoadingHeader;
 
 //override these methods for custom pull view
 - (UIView *)viewForRefreshHeaderView;

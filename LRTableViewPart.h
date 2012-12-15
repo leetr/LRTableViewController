@@ -10,10 +10,15 @@
 
 #define LRCellHeightDynamic -1
 
-typedef void (^OnCellSelectedBlock)(UITableView *tableView, NSIndexPath *realIndexPath, NSInteger partRow);
+@class LRTableViewPart;
+
+//old way
+typedef void (^OnCellSelectedBlock)(UITableView *tableView, NSIndexPath *realIndexPath, NSInteger partRow); 
 typedef void (^OnViewSelectedBlock)(UIView *view, NSInteger partRow);
 
-@class LRTableViewPart;
+//new way
+typedef void (^OnPartCellSelected)(LRTableViewPart *part, UITableView *tableView, NSIndexPath *indexPath, NSInteger partRow);
+typedef void (^OnPartCellViewSelected)(LRTableViewPart *part, UIView *view, NSInteger partRow);
 
 @protocol LRTableViewPartDelegate <NSObject>
 
@@ -29,10 +34,14 @@ typedef void (^OnViewSelectedBlock)(UIView *view, NSInteger partRow);
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSDictionary *bindings;
 @property (nonatomic) CGFloat cellHeight;
-@property (nonatomic, strong) OnCellSelectedBlock onCellSelectedBlock; 
-@property (nonatomic, strong) OnViewSelectedBlock onViewSelectedBlock; 
+@property (nonatomic, strong) OnPartCellSelected onPartCellSelected;
+@property (nonatomic, strong) OnPartCellViewSelected onPartCellViewSelected;
 @property (nonatomic, assign) id<LRTableViewPartDelegate> delegate;
 @property (nonatomic, assign) UITableViewRowAnimation rowAnimation;
+
+//deprecated attributes
+@property (nonatomic, strong) OnCellSelectedBlock onCellSelectedBlock; //TODO: deprecate this in the future
+@property (nonatomic, strong) OnViewSelectedBlock onViewSelectedBlock; //TODO: deprecate this in the future
 
 + (LRTableViewPart *)partWithCellStyle:(UITableViewCellStyle)style;
 + (LRTableViewPart *)partWithCellIdentifier:(NSString *)identifier;
@@ -42,5 +51,9 @@ typedef void (^OnViewSelectedBlock)(UIView *view, NSInteger partRow);
 - (CGFloat)heightForRow:(NSInteger)row;
 - (void)didSelectRow:(NSInteger)row realIndexPath:(NSIndexPath *)indexPath;
 - (void)observeObject:(id)object forKeyPath:(NSString *)keyPath;
+- (void)stopObserving;
+
+- (void)setOnPartCellSelected:(void(^)(LRTableViewPart *part, UITableView *tableView, NSIndexPath *indexPath, NSInteger partRow))onPartCellSelected;
+- (void)setOnPartCellViewSelected:(void(^)(LRTableViewPart *part, UIView *view, NSInteger partRow))onPartCellViewSelected;
 
 @end

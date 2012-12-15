@@ -34,4 +34,6 @@
 - (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 
 - (void)addPart:(LRTableViewPart *)part;
+- (void)removeAllParts;
+
 @end

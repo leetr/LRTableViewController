@@ -16,6 +16,7 @@ const NSUInteger kRowViewTag = 99119922;
 {
     LRObserving *_observing;
     NSMutableArray *_observingKeyPaths;
+    UITableViewCell *_heightCell;
 }
 
 - (UITableViewCell *)cellFromNibNamed:(NSString *)nibName;
@@ -66,6 +67,7 @@ const NSUInteger kRowViewTag = 99119922;
         _observing = [[LRObserving alloc] init];
         _observingKeyPaths = [[NSMutableArray alloc] init];
         _rowAnimation = UITableViewRowAnimationNone;
+        _heightCell = nil;
     }
     
     return self;
@@ -259,8 +261,7 @@ const NSUInteger kRowViewTag = 99119922;
     [self setRowNum:row forCell:cell];
 }
 
-//
-- (UITableViewCell *)cellForRow:(NSInteger)row
+- (UITableViewCell *)partCell
 {
     UITableViewCell *cell;
     
@@ -274,10 +275,33 @@ const NSUInteger kRowViewTag = 99119922;
         NSString *identifier = [UITableViewCell cellTypeToString:self.cellStyle];
         cell = [self.tableView dequeueReusableCellWithIdentifier:identifier];
         if (cell == nil) {
-            cell = [[[UITableViewCell alloc] initWithStyle:self.cellStyle 
+            cell = [[[UITableViewCell alloc] initWithStyle:self.cellStyle
                                            reuseIdentifier:[UITableViewCell cellTypeToString:self.cellStyle]] autorelease];
         }
     }
+    
+    return cell;
+}
+
+//
+- (UITableViewCell *)cellForRow:(NSInteger)row
+{
+    UITableViewCell *cell = [self partCell];
+    
+//    if (self.cellIdentifier != nil) {
+//        cell = [self.tableView dequeueReusableCellWithIdentifier:self.cellIdentifier];
+//        
+//        if (cell == nil) {
+//            cell = [self cellFromNibNamed:self.cellIdentifier];
+//        }
+//    } else {
+//        NSString *identifier = [UITableViewCell cellTypeToString:self.cellStyle];
+//        cell = [self.tableView dequeueReusableCellWithIdentifier:identifier];
+//        if (cell == nil) {
+//            cell = [[[UITableViewCell alloc] initWithStyle:self.cellStyle 
+//                                           reuseIdentifier:[UITableViewCell cellTypeToString:self.cellStyle]] autorelease];
+//        }
+//    }
     
     [self populateCell:cell forRow:row];
     
@@ -294,13 +318,17 @@ const NSUInteger kRowViewTag = 99119922;
 - (CGFloat)heightForRow:(NSInteger)row
 {
     if (self.cellHeight == -1) {
-        UITableViewCell *cell = [self cellForRow:row];
         
-        if (cell != nil && [cell conformsToProtocol:@protocol(LRCellHeight)]) {
-            return [(UITableViewCell<LRCellHeight> *)cell height];
+        if (_heightCell == nil) {
+            _heightCell = [self partCell];
+        }
+        
+        if (_heightCell != nil && [_heightCell conformsToProtocol:@protocol(LRCellHeight)]) {
+            [self populateCell:_heightCell forRow:row];
+            return [(UITableViewCell<LRCellHeight> *)_heightCell height];
         }
     } else if (self.cellHeight == 0) {
-    
+        
         
     } else {
         return self.cellHeight;

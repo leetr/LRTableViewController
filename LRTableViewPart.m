@@ -348,7 +348,7 @@ const NSUInteger kRowViewTag = 99119922;
     if (self.cellHeight == -1) {
         
         if (_heightCell == nil) {
-            _heightCell = [self partCell];
+            _heightCell = [[self partCell] retain];
         }
         
         [self populateCell:_heightCell forRow:row];

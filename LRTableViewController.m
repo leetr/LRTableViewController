@@ -124,13 +124,19 @@
     int numSections = _sections.count;
     if (numSections > 0) {
         
+        for (LRTableViewSection *section in _sections) {
+            section.tableView = nil;
+            section.delegate = nil;
+        }
+        
         [_sections removeAllObjects];
+        [_tableView reloadData];
         
-        NSRange range = NSMakeRange(0, numSections);
-        
-        [self.tableView beginUpdates];
-        [self.tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:range] withRowAnimation:UITableViewRowAnimationNone];
-        [self.tableView endUpdates];
+//        NSRange range = NSMakeRange(0, numSections);
+//        
+//        [self.tableView beginUpdates];
+//        [self.tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:range] withRowAnimation:UITableViewRowAnimationNone];
+//        [self.tableView endUpdates];
     }
 }
 
@@ -144,11 +150,22 @@
     int sectionIndex = [_sections indexOfObject:section];
     
     if (_sections.count > sectionIndex) {
+        
+        LRTableViewSection *section = [_sections objectAtIndex:sectionIndex];
+        section.tableView = nil;
+        section.delegate = nil;
+        
         [_sections removeObjectAtIndex:sectionIndex];
-    
-        [self.tableView beginUpdates];
-        [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:animation];
-        [self.tableView endUpdates];
+        
+        if (animation != UITableViewRowAnimationNone) {
+            
+            [self.tableView beginUpdates];
+            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionIndex] withRowAnimation:animation];
+            [self.tableView endUpdates];
+        }
+        else {
+            [_tableView reloadData];
+        }
     }
 }
 

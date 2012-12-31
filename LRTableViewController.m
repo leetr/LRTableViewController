@@ -51,6 +51,7 @@
 
 @synthesize tableView = _tableView;
 @synthesize isPullToRefresh = _isPullToRefresh;
+@synthesize clearsSelectionOnViewWillAppear = _clearsSelectionOnViewWillAppear;
 @synthesize refreshHeaderTextPull = _refreshHeaderTextPull;
 @synthesize refreshHeaderTextRelease = _refreshHeaderTextRelease; 
 @synthesize refreshHeaderTextLoading = _refreshHeaderTextLoading;
@@ -62,6 +63,7 @@
     
     if (self) {
         _sections = [[NSMutableArray alloc] init];
+        self.clearsSelectionOnViewWillAppear = YES;
         [self setupPullToRefreshHeaderStrings];
     }
     
@@ -117,6 +119,15 @@
     [super viewDidUnload];
     
     self.tableView = nil;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    if (_clearsSelectionOnViewWillAppear && _tableView) {
+        [_tableView deselectRowAtIndexPath:_tableView.indexPathForSelectedRow animated:YES];
+    }
 }
 
 - (void)removeAllSections
@@ -353,8 +364,9 @@
     
     // Show the header
     [UIView animateWithDuration:0.3 animations:^{
-        self.tableView.contentInset = UIEdgeInsetsMake(_refresh_header_height, 0, 0, 0);    
+        self.tableView.contentInset = UIEdgeInsetsMake(_refresh_header_height, 0, 0, 0);
     }];
+    [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
 }
 
 - (void)startLoading 

@@ -23,6 +23,7 @@
 @property (nonatomic, copy) NSString *refreshHeaderTextLoading;
 @property (nonatomic, copy) NSString *refreshHeaderImageName;
 @property (nonatomic) BOOL isPullToRefresh;
+@property (nonatomic) BOOL clearsSelectionOnViewWillAppear;
 @property (nonatomic, strong) IBOutlet UITableView *tableView;
 
 - (void)addSection:(LRTableViewSection *)section;
